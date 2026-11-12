@@ -483,7 +483,7 @@ export const register: Register = on => {
     const viewButton = (
       <Box key="wrap-view" hover={{ scope: 'tip-view' }}>
         <Button key="view" plain dimColor onPress={toggleView}>
-          <Text size="heading">{isCompact ? '⋯' : '×'}</Text>
+          <Text size="title">{isCompact ? '⋯' : '×'}</Text>
         </Button>
       </Box>
     )
@@ -498,7 +498,7 @@ export const register: Register = on => {
           {anyOn && (
             <Box key="wrap-settings" hover={{ scope: 'tip-settings' }}>
               <Button key="settings" plain dimColor onPress={() => openSettings($)}>
-                <Text size="heading">⚒︎</Text>
+                <Text size="title">⚒︎</Text>
               </Button>
             </Box>
           )}
@@ -593,9 +593,10 @@ export const register: Register = on => {
       const pick = await read($, agentPick)
       // shortcut: past 64 divisions the rest are left out of the list; group by fewer words if that ever happens.
       const groups = [...new Set(roster.map(a => a.group))].slice(0, MAX_OPTIONS)
-      const group = groups.includes(pick.group) ? pick.group : (groups[0] ?? '')
+      // With no pick yet the section opens on engineering ("engineering 1" when split) → AI Engineer, else the first.
+      const group = groups.includes(pick.group) ? pick.group : (groups.find(g => g.startsWith('engineering')) ?? groups[0] ?? '')
       const inGroup = roster.filter(a => a.group === group)
-      const agent = inGroup.find(a => a.name === pick.agent) ?? inGroup[0]
+      const agent = inGroup.find(a => a.name === pick.agent) ?? inGroup.find(a => a.name === 'AI Engineer') ?? inGroup[0]
       const titled = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
       agencySection = (
         <Box flexDirection="row" alignItems="center" gap={1} borderStyle="round" borderDimColor>

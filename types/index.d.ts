@@ -20,7 +20,7 @@ export type BarStats = { [tool: string]: { [stat: string]: boolean } }
 
 // A subagent in ~/.claude/agents: its name (what Claude calls it by), its file there, and its division (the file name's first word).
 export type Agent = { name: string; file: string; group: string }
-// The AGENCY section's picks: a division, then an agent in it ('' = the first).
+// The AGENCY section's picks: a division, then an agent in it ('' = engineering and AI Engineer where present, else the first).
 export type AgentPick = { group: string; agent: string }
 
 declare module 'claude-code' {

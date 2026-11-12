@@ -277,6 +277,17 @@ test('a division of over 64 agents is split, so the band still draws with any pi
   await ui.unmount()
 })
 
+test('with no pick yet the agency section opens on engineering, AI Engineer', async ($, on) => {
+  const agents = ['academic-a.md:name: A', 'academic-b.md:name: B', 'academic-c.md:name: C', 'engineering-ai-data.md:name: AI Data Engineer', 'engineering-ai-engineer.md:name: AI Engineer', 'engineering-z.md:name: Zed']
+  world(on, { installed: false, graph: false, agents: agents.map(a => `/home/u/.claude/agents/${a}`).join('\n') })
+  await $.session.start({ cwd: CWD, surface: 'desktop', isInteractive: true })
+  const ui = await $.ui.mount({ ...BAND, surface: 'desktop' })
+  const value = async (key: string) => ((await ui.find({ key })) as { props?: { value?: string } } | undefined)?.props?.value
+  expect(await value('agency-group')).toBe('engineering')
+  expect(await value('agency-agent')).toBe('AI Engineer')
+  await ui.unmount()
+})
+
 test('agency switched off the bar, or no agents, shows no section', async ($, on) => {
   world(on, { installed: false, graph: false, agents: AGENTS, settings: { enabled: { agency: false } } })
   await $.session.start({ cwd: CWD, surface: 'desktop', isInteractive: true })
