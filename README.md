@@ -16,7 +16,7 @@ A toolbar for Claude Code that sits right above the prompt box and puts your fav
 [![Issues](https://img.shields.io/github/issues/shaiksajid-in/penguin)](https://github.com/shaiksajid-in/penguin/issues)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](https://docs.claude.com/en/docs/claude-code/plugins)
 
-<img src="docs/screenshots/toolbar.png" alt="The PENGUIN toolbar above the Claude Code prompt box, with Ponytail, Graphify and Agency sections" width="782">
+<img src="docs/screenshots/toolbar.png" alt="The PENGUIN toolbar above the Claude Code prompt box, with Ponytail, Graphify and Agency sections" width="779">
 
 </div>
 
