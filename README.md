@@ -30,6 +30,7 @@ A toolbar for Claude Code that sits right above the prompt box and puts your fav
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Uninstalling](#uninstalling)
 - [How it works](#how-it-works)
 - [Privacy and security](#privacy-and-security)
 - [Development](#development)
@@ -93,6 +94,34 @@ Start a new session and the bar appears above the prompt box. Until any tool is 
 5. Press **×** to collapse the bar to one row, and **⋯** to bring it back.
 
 Hover any icon on the bar for a tooltip explaining what it does.
+
+## Uninstalling
+
+**1. Remove the tools first (optional).** The tools PENGUIN installed stay installed after PENGUIN is gone, and the settings page goes away with the plugin. So if you want them gone too, open ⚒ settings and, for each project you used:
+
+- press **Disconnect** under *Claude access* so Claude stops loading the Graphify server there
+- press **Remove from .gitignore** and **Delete folder** if you no longer want the rules or `graphify-out/`
+- press **Uninstall** on Graphify, Superpowers and Ponytail
+
+**2. Uninstall PENGUIN** in Claude Code:
+
+```text
+/plugin uninstall penguin@penguin
+/plugin marketplace remove penguin
+```
+
+Start a new session and the bar is gone.
+
+**3. Clean up leftovers (optional).** Delete PENGUIN's settings file:
+
+```bash
+rm -rf ~/.config/penguin
+```
+
+Two things are never deleted automatically, because they may hold your own files:
+
+- **Agency Agents** live in `~/.claude/agents/`. Delete the agent files you no longer want there.
+- **Agent copies** made by **Use** live in each project's `.claude/agents/`. Delete them there, along with the `# Agency Agents copies (added by PENGUIN)` block in that project's `.gitignore`.
 
 ## How it works
 
