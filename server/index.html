@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PENGUIN</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<style>
+  /* Ice and ink: cool neutrals, one deep glacier blue, and a single warm note (the beak) in the mark. */
+  :root {
+    --bg: #eef2f7; --bg-glow: #dde8f5; --card: #ffffff; --sunken: #f5f8fb; --raised: #ffffff;
+    --text: #0f1b2b; --muted: #556275; --border: #dbe2eb; --border-strong: #c3ccd8; --hairline: rgb(15 27 43 / .07);
+    --control-off: #8794a6;
+    --accent: #1a56b0; --accent-hover: #15479a; --accent-text: #ffffff; --accent-soft: rgb(26 86 176 / .09); --accent-line: rgb(26 86 176 / .35);
+    --ok: #1c6a44; --ok-soft: #e7f4ec; --ok-line: rgb(28 106 68 / .22);
+    --err: #b42318; --err-soft: #fdf0ee; --err-line: rgb(180 35 24 / .3);
+    --highlight: inset 0 1px 0 rgb(255 255 255 / .9);
+    --shadow: 0 1px 1px rgb(15 27 43 / .04), 0 2px 6px -2px rgb(15 27 43 / .06), 0 12px 28px -18px rgb(15 27 43 / .18);
+    --shadow-hover: 0 1px 1px rgb(15 27 43 / .04), 0 4px 10px -3px rgb(15 27 43 / .08), 0 18px 36px -20px rgb(15 27 43 / .26);
+    --btn-shadow: 0 1px 1px rgb(15 27 43 / .06), 0 1px 3px -1px rgb(15 27 43 / .08);
+    --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s8: 32px; --s10: 40px;
+    --r-sm: 6px; --r-md: 10px; --r-lg: 16px;
+    --ease: cubic-bezier(.2, .7, .2, 1);
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    color-scheme: light dark;
+  }
+  /* Dark: polar night rather than inverted light. Follows the system unless the toggle picked a theme (data-theme on <html>). */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0a1018; --bg-glow: #12233a; --card: #121a25; --sunken: #0d141d; --raised: #18222f;
+      --text: #e8eef5; --muted: #97a5b7; --border: #222e3d; --border-strong: #354457; --hairline: rgb(255 255 255 / .06);
+      --control-off: #6a798c;
+      --accent: #84b8ff; --accent-hover: #a2c9ff; --accent-text: #071528; --accent-soft: rgb(132 184 255 / .12); --accent-line: rgb(132 184 255 / .4);
+      --ok: #7fd8a8; --ok-soft: rgb(127 216 168 / .1); --ok-line: rgb(127 216 168 / .25);
+      --err: #ff9d92; --err-soft: rgb(255 120 105 / .1); --err-line: rgb(255 157 146 / .35);
+      --highlight: inset 0 1px 0 rgb(255 255 255 / .05);
+      --shadow: 0 1px 0 rgb(0 0 0 / .4), 0 14px 32px -20px rgb(0 0 0 / .8);
+      --shadow-hover: 0 1px 0 rgb(0 0 0 / .4), 0 20px 40px -20px rgb(0 0 0 / .9);
+      --btn-shadow: 0 1px 2px rgb(0 0 0 / .4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+      --bg: #0a1018; --bg-glow: #12233a; --card: #121a25; --sunken: #0d141d; --raised: #18222f;
+      --text: #e8eef5; --muted: #97a5b7; --border: #222e3d; --border-strong: #354457; --hairline: rgb(255 255 255 / .06);
+      --control-off: #6a798c;
+      --accent: #84b8ff; --accent-hover: #a2c9ff; --accent-text: #071528; --accent-soft: rgb(132 184 255 / .12); --accent-line: rgb(132 184 255 / .4);
+      --ok: #7fd8a8; --ok-soft: rgb(127 216 168 / .1); --ok-line: rgb(127 216 168 / .25);
+      --err: #ff9d92; --err-soft: rgb(255 120 105 / .1); --err-line: rgb(255 157 146 / .35);
+      --highlight: inset 0 1px 0 rgb(255 255 255 / .05);
+      --shadow: 0 1px 0 rgb(0 0 0 / .4), 0 14px 32px -20px rgb(0 0 0 / .8);
+      --shadow-hover: 0 1px 0 rgb(0 0 0 / .4), 0 20px 40px -20px rgb(0 0 0 / .9);
+      --btn-shadow: 0 1px 2px rgb(0 0 0 / .4);
+      color-scheme: dark;
+  }
+  :root[data-theme="light"] { color-scheme: light; }
+
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body { margin: 0; min-height: 100vh; color: var(--text); background-color: var(--bg);
+         background-image: radial-gradient(1100px 420px at 50% -160px, var(--bg-glow), transparent 70%);
+         background-repeat: no-repeat;
+         -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+         font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+         font-feature-settings: "cv11", "ss01"; }
+  main { max-width: 760px; margin: 0 auto; padding: var(--s10) var(--s4) 56px; }
+  a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+  ::selection { background: var(--accent-soft); }
+
+  /* Page header: the mark, the name, and a calm horizon rule underneath */
+  .masthead { position: relative; padding-bottom: var(--s6); margin-bottom: var(--s6); }
+  .masthead::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+                     background: linear-gradient(90deg, var(--border-strong), var(--border) 45%, transparent); }
+  header { display: flex; align-items: center; gap: var(--s4); flex-wrap: wrap; row-gap: var(--s3); }
+  .brand { display: flex; align-items: center; gap: var(--s4); min-width: 0; flex: 1 1 auto; }
+  /* logo.svg is used as a stencil filled with the text colour, so it follows the theme toggle too. */
+  .logo { width: 44px; height: 44px; flex: none; background: var(--text);
+          -webkit-mask: url(logo.svg) center / contain no-repeat; mask: url(logo.svg) center / contain no-repeat;
+          transition: transform .5s var(--ease); transform-origin: 50% 90%; }
+  .masthead:hover .logo { transform: rotate(-6deg); }
+  .eyebrow { display: block; font: 600 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
+  h1 { font-size: 26px; line-height: 1.15; font-weight: 650; margin: 0; letter-spacing: -.025em; }
+  .header-end { margin-left: auto; display: flex; align-items: center; gap: var(--s2); }
+  .repo-link { font-size: 13px; font-weight: 500; text-decoration: none; color: var(--text); display: inline-flex; align-items: center; gap: 6px;
+               min-height: 38px; padding: 0 var(--s3); border-radius: var(--r-md); border: 1px solid transparent;
+               transition: background-color .15s, border-color .15s; }
+  .repo-link span { color: var(--muted); transition: transform .2s var(--ease); }
+  .repo-link:hover { background: var(--card); border-color: var(--border); }
+  .repo-link:hover span { transform: translate(2px, -2px); }
+  .theme { width: 38px; height: 38px; min-height: 38px; padding: 0; display: grid; place-items: center; font-size: 17px; line-height: 1;
+           background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: var(--r-md);
+           box-shadow: var(--highlight), var(--btn-shadow); }
+  .theme:hover:not(:disabled) { background: var(--raised); border-color: var(--border-strong); color: var(--accent); }
+  .sub { color: var(--muted); margin: var(--s4) 0 0; font-size: 14.5px; line-height: 1.6; max-width: 62ch; text-wrap: pretty; }
+  #tools > .sub { margin: 0; padding: var(--s8) 0; text-align: center; }
+
+  /* Tool card: a tactile slab with a lit top edge */
+  .tool { position: relative; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg);
+          box-shadow: var(--highlight), var(--shadow); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4); min-width: 0;
+          transition: box-shadow .25s var(--ease), border-color .25s var(--ease); }
+  .tool:hover { box-shadow: var(--highlight), var(--shadow-hover); border-color: var(--border-strong); }
+  .tool + .tool { margin-top: var(--s4); }
+  .tool-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s4) var(--s6); flex-wrap: wrap; }
+  .tool-info { flex: 1 1 300px; min-width: 0; }
+  .name { font-weight: 650; font-size: 18px; line-height: 1.3; letter-spacing: -.015em; display: flex; align-items: center; flex-wrap: wrap; gap: var(--s2) 10px; margin: 0; }
+  .name a { color: inherit; text-decoration: none; }
+  .name a:hover { text-decoration: underline; text-decoration-color: var(--accent-line); }
+  .desc { color: var(--muted); margin: 6px 0 0; font-size: 14px; line-height: 1.6; max-width: 60ch; text-wrap: pretty; }
+  .repo { display: inline-flex; align-items: center; gap: 5px; margin-top: var(--s3); font-size: 13px; font-weight: 500; text-decoration: none; }
+  .repo span { transition: transform .2s var(--ease); }
+  .repo:hover { text-decoration: underline; text-decoration-color: var(--accent-line); }
+  .repo:hover span { transform: translate(2px, -2px); }
+
+  /* Status badge: the label carries the state, the dot only reinforces it */
+  .badge { display: inline-flex; align-items: center; gap: 6px; font: 600 11px/1 var(--mono); letter-spacing: .04em; text-transform: uppercase;
+           padding: 5px 9px 5px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); background: var(--sunken); white-space: nowrap; }
+  .badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid currentColor; flex: none; }
+  .badge.ok { color: var(--ok); background: var(--ok-soft); border-color: var(--ok-line); }
+  .badge.ok::before { background: currentColor; box-shadow: 0 0 0 3px var(--ok-line); }
+
+  .actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: var(--s3) var(--s4); }
+
+  /* Buttons */
+  button { font: inherit; font-size: 14px; font-weight: 550; line-height: 1.2; border-radius: var(--r-md); padding: 9px 16px;
+           min-height: 38px; cursor: pointer; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-text);
+           box-shadow: inset 0 1px 0 rgb(255 255 255 / .18), var(--btn-shadow);
+           transition: background-color .15s, border-color .15s, color .15s, box-shadow .15s, transform .1s var(--ease); }
+  button:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+  button:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
+  button:disabled { opacity: .65; cursor: progress; }
+  button:focus-visible, .switch input:focus-visible + span, .check input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.secondary { background: var(--raised); color: var(--text); border-color: var(--border-strong); box-shadow: var(--highlight), var(--btn-shadow); }
+  button.secondary:hover:not(:disabled) { background: var(--card); border-color: var(--accent-line); color: var(--accent); }
+  button.danger { background: transparent; color: var(--err); border-color: var(--err-line); box-shadow: none; }
+  button.danger:hover:not(:disabled) { background: var(--err-soft); border-color: var(--err); }
+
+  /* Show-on-bar switch: a real checkbox; the knob position, not just colour, shows the state */
+  .switch { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer;
+            min-height: 38px; position: relative; user-select: none; }
+  .switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .switch span { flex: none; width: 42px; height: 24px; border-radius: 999px; background: var(--control-off); position: relative;
+                 box-shadow: inset 0 1px 2px rgb(0 0 0 / .18); transition: background-color .2s var(--ease); }
+  .switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%;
+                        background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / .3), 0 2px 6px rgb(0 0 0 / .12);
+                        transition: transform .22s var(--ease), width .15s var(--ease); }
+  .switch:active span::after { width: 21px; }
+  .switch input:checked + span { background: var(--accent); }
+  .switch input:checked + span::after { transform: translateX(18px); }
+  .switch:active input:checked + span::after { transform: translateX(15px); }
+  .switch input:disabled + span { opacity: .6; }
+
+  /* Panels: one per setting, a sunken well with an eyebrow title */
+  .subrow { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--s3);
+            background: var(--sunken); border: 1px solid var(--hairline); border-radius: var(--r-md);
+            padding: var(--s4); font-size: 14px; color: var(--muted); }
+  .subrow-label { flex: 1 1 240px; min-width: 0; overflow-wrap: anywhere; line-height: 1.6; }
+  .subrow-title { display: block; color: var(--text); font: 600 11px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+  .subrow strong { color: var(--text); font-weight: 600; }
+  .ctrl { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--s2) var(--s3); }
+  code { font: 12.5px/1.4 var(--mono); background: var(--card); border: 1px solid var(--border);
+         border-radius: var(--r-sm); padding: 1px 6px; color: var(--text); overflow-wrap: anywhere; }
+  .done { color: var(--ok); font-weight: 600; font-size: 13.5px; }
+  .hint { color: var(--muted); font-size: 13px; }
+  .note-inline { flex-basis: 100%; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+  .subrow > .note-inline { padding-top: var(--s3); border-top: 1px solid var(--hairline); }
+  .tool > .note-inline { padding-left: var(--s3); border-left: 2px solid var(--accent-line); }
+
+  /* Stat checkboxes as chips: the native box still shows the state, the chip only frames it */
+  .checks { flex-basis: 100%; display: grid; grid-template-columns: repeat(auto-fill, minmax(156px, 1fr)); gap: var(--s2); }
+  .check { display: flex; align-items: center; gap: 10px; color: var(--text); cursor: pointer; min-height: 40px; font-size: 13.5px;
+           padding: 0 var(--s3); border-radius: var(--r-md); background: var(--card); border: 1px solid var(--border);
+           transition: border-color .15s, background-color .15s; }
+  .check:hover { border-color: var(--accent-line); }
+  .check:has(input:checked) { background: var(--accent-soft); border-color: var(--accent-line); }
+  .check input { accent-color: var(--accent); margin: 0; width: 16px; height: 16px; flex: none; }
+
+  .error { margin: 0; color: var(--err); background: var(--err-soft); border: 1px solid var(--err-line); border-radius: var(--r-md);
+           padding: var(--s3) var(--s4) var(--s3) 40px; font-size: 14px; overflow-wrap: anywhere; position: relative; }
+  .error::before { content: "!"; position: absolute; left: 13px; top: 13px; width: 17px; height: 17px; border-radius: 50%;
+                   background: var(--err); color: var(--card); font: 700 11px/17px var(--mono); text-align: center; }
+
+  footer { margin-top: var(--s10); padding-top: var(--s6); border-top: 1px solid var(--border); text-align: center; }
+  .credit { color: var(--muted); font-size: 12.5px; margin: var(--s3) 0 0; }
+  .credit a { font-weight: 500; }
+
+  @media (max-width: 560px) {
+    main { padding-top: var(--s6); }
+    h1 { font-size: 22px; }
+    .logo { width: 38px; height: 38px; }
+    .header-end { margin-left: 0; width: 100%; justify-content: space-between; }
+    .repo-link { padding-left: 0; }
+    .tool { padding: var(--s4); border-radius: 14px; }
+    .subrow { padding: var(--s3); }
+    .actions { justify-content: flex-start; flex-basis: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+</style>
+
+</head>
+<body>
+<main>
+  <div class="masthead">
+    <header>
+      <div class="brand">
+        <span class="logo" aria-hidden="true"></span>
+        <div><span class="eyebrow">Claude Code plugin</span><h1>PENGUIN</h1></div>
+      </div>
+      <span class="header-end">
+        <a class="repo-link" href="https://github.com/shaiksajid-in/penguin" target="_blank" rel="noopener" aria-label="PENGUIN on GitHub" title="PENGUIN on GitHub"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+        <button type="button" class="theme" id="theme"></button>
+      </span>
+    </header>
+  </div>
+  <div id="tools" aria-live="polite"><p class="sub">Loading…</p></div>
+  <footer>
+    <p class="credit">built by ai, of ai, for ai, guided by a <a href="https://shaiksajid.in" target="_blank" rel="noopener">human</a>.</p>
+  </footer>
+</main>
+<script>
+  // The token arrives in the URL fragment, which the browser never sends to the server or in a Referer.
+  const token = new URLSearchParams(location.hash.slice(1)).get('t') || ''
+  const box = document.getElementById('tools')
+
+  // Light/dark toggle: flips whichever theme is showing now. Saved in PENGUIN's settings file, since the page's
+  // port (and so its browser storage) changes on every launch; without a choice the page follows the system.
+  const themeBtn = document.getElementById('theme')
+  const isDark = () => (document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) === 'dark'
+  function paintThemeButton() {
+    themeBtn.textContent = isDark() ? '☀︎' : '☾'
+    themeBtn.setAttribute('aria-label', isDark() ? 'Switch to light mode' : 'Switch to dark mode')
+    themeBtn.title = themeBtn.getAttribute('aria-label')
+  }
+  themeBtn.addEventListener('click', () => {
+    const next = isDark() ? 'light' : 'dark'
+    document.documentElement.dataset.theme = next
+    paintThemeButton()
+    api('/api/theme', { method: 'POST', body: JSON.stringify({ theme: next }) }).catch(() => {})
+  })
+  paintThemeButton()
+
+  async function api(path, opts = {}) {
+    const res = await fetch(path, { ...opts, headers: { 'X-PENGUIN-Token': token, 'Content-Type': 'application/json' } })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) throw Object.assign(new Error(data.error || res.statusText), { data })
+    return data
+  }
+
+  function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]) }
+
+  // The tool's output folder in this project: .gitignore controls while installed, and Delete while it exists.
+  function projectRow(t) {
+    const out = t.output, gi = t.installed ? t.gitignore : null
+    if (!out || (!out.exists && !gi)) return ''
+    const ignore = !gi ? ''
+      : !gi.ignored ? '<button class="secondary" data-act="gitignore">Add to .gitignore</button>'
+      : gi.ours ? '<span class="done">✓ Ignored by git</span><button class="secondary" data-act="unignore">Remove from .gitignore</button>'
+      : '<span class="done" title="A rule you wrote yourself ignores it, so PENGUIN leaves it alone">✓ Ignored by your git rules</span>'
+    const del = out.exists ? '<button class="danger" data-act="delete-output">Delete folder</button>' : ''
+    return `
+        <div class="subrow">
+          <span class="subrow-label"><span class="subrow-title">Generated files</span>In <strong>${esc(out.project)}</strong>: <code>${esc(out.folder)}/</code></span>
+          <span class="ctrl">${ignore}${del}</span>
+        </div>`
+  }
+
+  // Agents the bar copied into this project: one .gitignore line each, kept in a block PENGUIN added (and can remove).
+  function copiesRow(t) {
+    const c = t.copies
+    if (!c) return ''
+    const n = `${c.count} agent${c.count === 1 ? '' : 's'}`
+    const action = !c.repo ? '<span class="hint">Not in a git repository</span>'
+      : c.ignored < c.count
+        ? `${c.ignored ? `<span class="hint">${c.ignored} of ${c.count} ignored</span>` : ''}<button class="secondary" data-act="ignore-copies">Add to .gitignore</button>`
+        : c.ours ? '<span class="done">✓ Ignored by git</span><button class="secondary" data-act="unignore-copies">Remove from .gitignore</button>'
+        : '<span class="done" title="Rules you wrote yourself ignore them, so PENGUIN leaves them alone">✓ Ignored by your git rules</span>'
+    return `
+        <div class="subrow">
+          <span class="subrow-label"><span class="subrow-title">Copied agents</span>${n} in <strong>${esc(c.project)}</strong>: <code>${esc(c.folder)}/</code></span>
+          <span class="ctrl">${action}</span>
+          <p class="note-inline">Pressing Use on the bar copies that agent here. Adding to .gitignore lists each copy by name, so agents you wrote in this folder stay tracked.</p>
+        </div>`
+  }
+
+  // Whether Claude can query the graph in this project (the tool's MCP server is registered for it).
+  function connectRow(t) {
+    const m = t.mcp
+    if (!m || !t.installed) return ''
+    const action = m.connected
+      ? m.scope === 'local'
+        ? '<span class="done">✓ Connected</span><button class="secondary" data-act="disconnect">Disconnect</button>'
+        : '<span class="done" title="Set up in this project\'s .mcp.json, which PENGUIN leaves alone">✓ Connected (.mcp.json)</span>'
+      : m.graph
+        ? '<button class="secondary" data-act="connect">Connect</button>'
+        : '<span class="hint">Build a graph first (↻ on the bar)</span>'
+    return `
+        <div class="subrow">
+          <span class="subrow-label"><span class="subrow-title">Claude access</span>Claude can query this graph in <strong>${esc(m.project)}</strong></span>
+          <span class="ctrl">${action}</span>
+          <p class="note-inline">Applies to new Claude sessions.</p>
+        </div>`
+  }
+
+  // Which of the tool's stats show in its section of the bar, one checkbox each; only while it is shown on the bar.
+  function statsRow(t) {
+    if (!t.stats.length || !t.installed || !t.enabled) return ''
+    const boxes = t.stats.map(s =>
+      `<label class="check"><input type="checkbox" data-stat="${esc(s.key)}" ${s.on ? 'checked' : ''}>${esc(s.label)}</label>`).join('')
+    return `
+        <div class="subrow" role="group" aria-label="Stats on the bar">
+          <span class="subrow-label"><span class="subrow-title">Stats on the bar</span></span>
+          <span class="checks">${boxes}</span>
+          <p class="note-inline">Stats with nothing to report yet (no tests run, no callers open) stay hidden until they do.</p>
+        </div>`
+  }
+
+  let recheck
+  function render(state, errors = {}) {
+    if (state.theme && !document.documentElement.dataset.theme) {
+      document.documentElement.dataset.theme = state.theme
+      paintThemeButton()
+    }
+    current = state
+    // The server is still fetching the marketplaces' latest catalogs: look again shortly for Update buttons.
+    clearTimeout(recheck)
+    if (state.checking) recheck = setTimeout(() => api('/api/state').then(s => render(s)).catch(() => {}), 2000)
+    box.innerHTML = state.tools.map(t => `
+      <section class="tool" data-id="${esc(t.id)}">
+        <div class="tool-head">
+        <div class="tool-info">
+          <h2 class="name"><a href="${esc(t.repo)}" target="_blank" rel="noopener">${esc(t.name)}</a>
+            <span class="badge ${t.installed ? 'ok' : ''}">${t.installing ? 'Installing…' : t.installed ? 'Installed' : 'Not installed'}</span></h2>
+          <p class="desc">${esc(t.description)}</p>
+          <a class="repo" href="${esc(t.repo)}" target="_blank" rel="noopener">View ${esc(t.name)} on GitHub <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="actions">
+          ${t.installing
+            ? '<button disabled>Working…</button>'
+            : t.installed
+              ? `${!t.bar ? '' : `<label class="switch"><input type="checkbox" data-act="enabled" ${t.enabled ? 'checked' : ''}><span></span>Show on bar</label>`}
+                 ${t.update ? `<button data-act="update">Update${t.update.version ? ` to ${esc(t.update.version)}` : ''}</button>` : ''}
+                 ${t.uninstall ? '<button class="danger" data-act="uninstall">Uninstall</button>' : ''}`
+              : '<button data-act="install">Install</button>'}
+        </div>
+        </div>
+        ${t.plugin ? '<p class="note-inline">A Claude Code plugin: installing or uninstalling applies to new Claude sessions.</p>' : ''}
+        ${t.installed && !t.uninstall ? '<p class="note-inline">Installed as agent files in <code>~/.claude/agents</code>; to remove them, delete the ones you no longer want there.</p>' : ''}
+        ${statsRow(t)}
+        ${connectRow(t)}
+        ${copiesRow(t)}
+        ${projectRow(t)}
+        ${errors[t.id] ? `<p class="error">${esc(errors[t.id])}</p>` : ''}
+      </section>`).join('')
+  }
+
+  // What each button says while it runs, what it asks first (the two that can't be undone), and its error.
+  const ACTIONS = {
+    install: { busy: 'Installing…', fail: 'Install failed' },
+    update: { busy: 'Updating…', fail: 'Update failed' },
+    uninstall: { busy: 'Uninstalling…', fail: 'Uninstall failed',
+      confirm: (name, t) => t.plugin
+        ? `Uninstall the ${name} plugin from Claude Code?`
+        : `Uninstall ${name}? This removes the ${name} command and its Claude skill. Graphs you've built stay on disk.` },
+    'delete-output': { busy: 'Deleting…', fail: "Couldn't delete the folder",
+      confirm: (name, t) => `Permanently delete ${t.output.folder}/ in ${t.output.project}? This can't be undone; press ↻ on the bar to build a new graph.` },
+    connect: { busy: 'Connecting…', fail: "Couldn't connect" },
+    disconnect: { busy: 'Disconnecting…', fail: "Couldn't disconnect" },
+    gitignore: { busy: 'Saving…', fail: "Couldn't update .gitignore" },
+    'ignore-copies': { busy: 'Saving…', fail: "Couldn't update .gitignore" },
+    'unignore-copies': { busy: 'Saving…', fail: "Couldn't update .gitignore" },
+    unignore: { busy: 'Saving…', fail: "Couldn't update .gitignore" },
+  }
+  let current = { tools: [] }
+
+  box.addEventListener('click', async e => {
+    const btn = e.target.closest('button[data-act]')
+    const spec = btn && ACTIONS[btn.dataset.act]
+    if (!spec) return
+    const id = btn.closest('.tool').dataset.id
+    const tool = current.tools.find(t => t.id === id)
+    if (spec.confirm && !confirm(spec.confirm(tool.name, tool))) return
+    btn.disabled = true
+    btn.textContent = spec.busy
+    try { render(await api(`/api/tools/${id}/${btn.dataset.act}`, { method: 'POST' })) }
+    catch (err) { render(err.data && err.data.tools ? err.data : await api('/api/state'), { [id]: `${spec.fail}: ${err.message}` }) }
+  })
+
+  box.addEventListener('change', async e => {
+    const stat = e.target.closest('input[data-stat]')
+    if (stat) {
+      const id = stat.closest('.tool').dataset.id
+      stat.disabled = true
+      const body = JSON.stringify({ key: stat.dataset.stat, enabled: stat.checked })
+      try { render(await api(`/api/tools/${id}/stats`, { method: 'POST', body })) }
+      catch (err) { render(await api('/api/state'), { [id]: `Couldn't save: ${err.message}` }) }
+      return
+    }
+    const input = e.target.closest('input[data-act="enabled"]')
+    if (!input) return
+    const id = input.closest('.tool').dataset.id
+    input.disabled = true // switching on can take a moment: it also connects Claude to the graph
+    try {
+      const s = await api(`/api/tools/${id}/enabled`, { method: 'POST', body: JSON.stringify({ enabled: input.checked }) })
+      render(s, s.warning ? { [id]: s.warning } : {})
+    }
+    catch (err) { input.checked = !input.checked; render(await api('/api/state'), { [id]: `Couldn't save: ${err.message}` }) }
+  })
+
+  api('/api/state').then(s => render(s)).catch(err => {
+    box.innerHTML = `<p class="error">Couldn't reach PENGUIN (${esc(err.message)}). Open this page again from the ⚒ button on the bar.</p>`
+  })
+</script>
+</body>
+</html>

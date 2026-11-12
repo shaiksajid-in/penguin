@@ -1,0 +1,6 @@
+{
+  "name": "penguin",
+  "version": "0.54.0",
+  "description": "PENGUIN toolbar above the Claude prompt bar",
+  "types": "./types/index.d.ts"
+}

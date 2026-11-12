@@ -1,0 +1,5 @@
+{
+  "name": "penguin",
+  "owner": { "name": "Rogue Treasure" },
+  "plugins": [{ "name": "penguin", "source": "./" }]
+}
