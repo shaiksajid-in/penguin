@@ -85,6 +85,22 @@ In Claude Code, add this repository as a plugin marketplace and install the plug
 
 Start a new session and the bar appears above the prompt box. Until any tool is installed, it shows a single **⤓** button that opens the settings page.
 
+### Let your agent install it
+
+Copy this prompt and paste it into Claude Code (or any coding agent that can run shell commands):
+
+```text
+Install the PENGUIN plugin for Claude Code from https://github.com/shaiksajid-in/penguin.
+Run these two commands in the terminal, one after the other:
+
+  claude plugin marketplace add shaiksajid-in/penguin
+  claude plugin install penguin@penguin --scope user
+
+If the first command says the marketplace already exists, carry on with the second.
+Then confirm it worked with `claude plugin list`, and tell me to start a new
+Claude Code session so the PENGUIN bar appears above the prompt box.
+```
+
 ## Usage
 
 1. **Open settings** with ⚒ (or ⤓ on a fresh install) and press **Install** on the tools you want.
