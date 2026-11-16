@@ -483,7 +483,7 @@ export const register: Register = on => {
     const viewButton = (
       <Box key="wrap-view" hover={{ scope: 'tip-view' }}>
         <Button key="view" plain dimColor onPress={toggleView}>
-          <Text size="title">{isCompact ? '⋯' : '×'}</Text>
+          <Text size="title">{isCompact ? '▴' : '▾'}</Text>
         </Button>
       </Box>
     )
@@ -498,7 +498,7 @@ export const register: Register = on => {
           {anyOn && (
             <Box key="wrap-settings" hover={{ scope: 'tip-settings' }}>
               <Button key="settings" plain dimColor onPress={() => openSettings($)}>
-                <Text size="title">⚒︎</Text>
+                <Text size="title">⛭</Text>
               </Button>
             </Box>
           )}
@@ -520,11 +520,8 @@ export const register: Register = on => {
     // Ponytail's section, drawn like Ponytail's own band in its details view.
     let ponytailSection = null
     if (pt) {
+      const { Select } = $.ui.resolve(e)
       const cols = pony.detailCols(pt, (await read($, barStats)).ponytail ?? {})
-      const copy = async () => {
-        const done = await $.ui.copy({ text: pony.markdown(pt, cols), surface: e.surface })
-        $.ui.toast(done.isCopied ? 'Ponytail stats copied as Markdown' : `Copy failed: ${done.reason}`)
-      }
       // Text glyphs make broken lines in the desktop's proportional font; Ponytail draws an SVG there.
       const metrics =
         e.surface === 'desktop' ? (
@@ -562,23 +559,19 @@ export const register: Register = on => {
                 PONYTAIL
               </Text>
             </Link>
-            {pony.LEVELS.map(level => (
-              <Button
-                key={`pt-level-${level}`}
-                // Shown capitalised; the command still gets the lowercase level. The ✓ marks the current one in words.
-                label={`${level === pt.level ? '✓ ' : ''}${level.charAt(0).toUpperCase()}${level.slice(1)}`}
-                variant="secondary"
-                onPress={() => ponytailRun($, 'ponytail:ponytail', level)}
-              />
-            ))}
+            {/* Shown capitalised; the command still gets the lowercase level. */}
+            <Select
+              key="pt-level"
+              options={pony.LEVELS.map(l => ({ value: l, label: `${l.charAt(0).toUpperCase()}${l.slice(1)}` }))}
+              value={pt.level}
+              onSelect={level => ponytailRun($, 'ponytail:ponytail', level)}
+            />
             <Box flexGrow={1} />
-            {/* Review and Audit, then │, then Copy and Board as icons (names in their tooltips, like Graphify's). */}
+            {/* Review and Audit, then │, then Board as an icon (its name in its tooltip, like Graphify's). */}
             <Button key="pt-review" variant="secondary" label="Review" onPress={() => ponytailRun($, 'ponytail:ponytail-review')} />
             <Button key="pt-audit" variant="secondary" label="Audit" onPress={() => ponytailRun($, 'ponytail:ponytail-audit')} />
             <Text dimColor>│</Text>
-            {icon('pt-copy', '⧉', copy)}
-            {icon('pt-board', '▦', () => openPonytailBoard($))}
-            {tip('pt-copy', 'Copy · the stats as a Markdown table')}
+            {icon('pt-board', '↗', () => openPonytailBoard($))}
             {tip('pt-board', 'Board · every tracked session, in your browser')}
           </Box>
           {cols.length > 0 && metrics}
@@ -659,7 +652,7 @@ export const register: Register = on => {
               g.error
                 ? 'Something failed · the next successful action clears it'
                 : hasGraph && !connected
-                  ? 'Graph not connected to this session · Connect it in ⚒ settings, then start a new session'
+                  ? 'Graph not connected to this session · Connect it in ⛭ settings, then start a new session'
                   : 'Working',
               'right',
             )}

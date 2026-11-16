@@ -50,7 +50,7 @@ Claude Code has a growing ecosystem of plugins, skills and subagents, but each o
 | **Ponytail** | Switch [Ponytail](https://github.com/DietrichGebert/ponytail) between Off, Lite, Full and Ultra with one click. Run Review or Audit, see live session cost, tokens, turns and agent time, copy the stats as Markdown, or open the board of every session. |
 | **Graphify** | Build a [Graphify](https://github.com/Graphify-Labs/graphify) knowledge graph of the current folder (↻), rebuild it automatically as files change (▷), and open it in the browser (↗). The bar shows tokens saved per query, how many times fewer tokens that is, and how often Claude queried the graph. |
 | **Agency** | Pick any of hundreds of [Agency Agents](https://github.com/msitarzewski/agency-agents) subagents by division. **Use** puts "Use the *agent* agent to …" in the prompt box, and **Auto** lets Claude pick the best one for the task. |
-| **Settings page** (⚒) | Install, update and uninstall each tool, choose what shows on the bar, connect Claude to the graph, and keep generated files out of git, all from one local page with light and dark themes. |
+| **Settings page** (⛭) | Install, update and uninstall each tool, choose what shows on the bar, connect Claude to the graph, and keep generated files out of git, all from one local page with light and dark themes. |
 
 The bar also has a compact one-row view (×), and it draws its own logo on desktop and a 🐧 in the terminal.
 
@@ -103,7 +103,7 @@ Claude Code session so the PENGUIN bar appears above the prompt box.
 
 ## Usage
 
-1. **Open settings** with ⚒ (or ⤓ on a fresh install) and press **Install** on the tools you want.
+1. **Open settings** with ⛭ (or ⤓ on a fresh install) and press **Install** on the tools you want.
 2. **Graphify:** press ↻ to build the graph for the current folder, then **Connect** on the settings page so new Claude sessions can query it. Press ▷ to rebuild automatically as you edit.
 3. **Ponytail:** pick a level. Its figures update after every turn, and you choose which ones show under **Stats on the bar**.
 4. **Agency:** choose a division and an agent, type your task, and press **Use**, or press **Auto** and let Claude choose.
@@ -113,7 +113,7 @@ Hover any icon on the bar for a tooltip explaining what it does.
 
 ## Uninstalling
 
-**1. Remove the tools first (optional).** The tools PENGUIN installed stay installed after PENGUIN is gone, and the settings page goes away with the plugin. So if you want them gone too, open ⚒ settings and, for each project you used:
+**1. Remove the tools first (optional).** The tools PENGUIN installed stay installed after PENGUIN is gone, and the settings page goes away with the plugin. So if you want them gone too, open ⛭ settings and, for each project you used:
 
 - press **Disconnect** under *Claude access* so Claude stops loading the Graphify server there
 - press **Remove from .gitignore** and **Delete folder** if you no longer want the rules or `graphify-out/`
@@ -219,7 +219,7 @@ PENGUIN brings together these projects. All credit for the tools themselves goes
 [MIT](LICENSE) © 2026 Sajid Shaik
 
 <div align="center">
-<sub>Built by AI, of AI, for AI, guided by a <a href="https://shaiksajid.in">human</a>.</sub>
+<sub>Built of AI, by AI, for AI — guided by a <a href="https://shaiksajid.in">human</a>.</sub>
 <br><br>
 If PENGUIN saves you time, consider giving it a ⭐
 </div>

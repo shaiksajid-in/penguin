@@ -214,7 +214,7 @@
   </div>
   <div id="tools" aria-live="polite"><p class="sub">Loading…</p></div>
   <footer>
-    <p class="credit">built by ai, of ai, for ai, guided by a <a href="https://shaiksajid.in" target="_blank" rel="noopener">human</a>.</p>
+    <p class="credit">Built of AI, by AI, for AI — guided by a <a href="https://shaiksajid.in" target="_blank" rel="noopener">human</a>.</p>
   </footer>
 </main>
 <script>
@@ -306,11 +306,13 @@
     if (!t.stats.length || !t.installed || !t.enabled) return ''
     const boxes = t.stats.map(s =>
       `<label class="check"><input type="checkbox" data-stat="${esc(s.key)}" ${s.on ? 'checked' : ''}>${esc(s.label)}</label>`).join('')
+    // The switch hides the whole strip; the checkboxes keep their picks for when it comes back.
     return `
         <div class="subrow" role="group" aria-label="Stats on the bar">
           <span class="subrow-label"><span class="subrow-title">Stats on the bar</span></span>
-          <span class="checks">${boxes}</span>
-          <p class="note-inline">Stats with nothing to report yet (no tests run, no callers open) stay hidden until they do.</p>
+          <label class="switch"><input type="checkbox" data-stat="all" ${t.statsOn ? 'checked' : ''}><span></span>Show stats</label>
+          ${t.statsOn ? `<span class="checks">${boxes}</span>
+          <p class="note-inline">Stats with nothing to report yet (no tests run, no callers open) stay hidden until they do.</p>` : ''}
         </div>`
   }
 
@@ -407,7 +409,7 @@
   })
 
   api('/api/state').then(s => render(s)).catch(err => {
-    box.innerHTML = `<p class="error">Couldn't reach PENGUIN (${esc(err.message)}). Open this page again from the ⚒ button on the bar.</p>`
+    box.innerHTML = `<p class="error">Couldn't reach PENGUIN (${esc(err.message)}). Open this page again from the ⛭ button on the bar.</p>`
   })
 </script>
 </body>

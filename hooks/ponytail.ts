@@ -46,6 +46,7 @@ export type Col = { key: string; label: string; value: string; sub: string; tone
 
 // The details view's columns, as Ponytail's details band draws them; callers and tests once there is something to report.
 export function detailCols(b: PonytailBand, show: Show): Col[] {
+  if (!on(show, 'all')) return [] // the settings page's switch for the whole stats strip
   const l = last(b)
   const avg = b.turns > 0 ? b.spent / b.turns : 0
   const r = reuse(b)
@@ -87,11 +88,6 @@ export function detailCols(b: PonytailBand, show: Show): Col[] {
   ]
   return cols.filter((c): c is Col => c !== false)
 }
-
-// What Copy puts on the clipboard: the columns shown, as a Markdown table.
-const cell = (v: string) => v.replace(/\|/g, '\\|')
-export const markdown = (b: PonytailBand, cols: Col[]) =>
-  ['## Ponytail', '', '| | |', '|---|---|', `| level | ${cell(b.level)} |`, ...cols.map(c => `| ${cell(c.label)} | ${cell(c.value + (c.sub ? ` (${c.sub})` : ''))} |`)].join('\n')
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 const fit = (s: string, max: number) => (s.length > max ? `${s.slice(0, Math.max(1, max - 1))}…` : s)

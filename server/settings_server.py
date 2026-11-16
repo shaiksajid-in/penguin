@@ -416,6 +416,7 @@ def state() -> dict:
                 "uninstall": "uninstall" in t,
                 # Whether it has anything on the bar: every non-plugin tool, and plugins marked `bar`.
                 "bar": "plugin" not in t or t.get("bar", False),
+                "statsOn": shown.get(tid, {}).get("all", True),
                 "stats": [
                     {"key": k, "label": label, "on": shown.get(tid, {}).get(k, True)}
                     for k, label in t.get("stats", {}).items()
@@ -521,7 +522,7 @@ class Handler(BaseHTTPRequestHandler):
 
         if action == "stats":
             key = body.get("key")
-            if key not in TOOLS[tid].get("stats", {}):
+            if key != "all" and key not in TOOLS[tid].get("stats", {}):  # "all" is the switch for the whole stats strip
                 return self._json(400, {"error": "unknown stat"})
             with lock:
                 data = load_settings()

@@ -135,19 +135,18 @@ test('ponytail gets its own section, drawn like its details band, without graphi
   await $.session.start({ cwd: CWD, surface: 'terminal', isInteractive: true })
 
   const ui = await $.ui.mount({ ...BAND, surface: 'terminal' })
-  for (const key of ['pt-level-off', 'pt-level-lite', 'pt-level-full', 'pt-level-ultra', 'pt-copy', 'pt-review', 'pt-audit', 'pt-board']) {
+  for (const key of ['pt-level', 'pt-review', 'pt-audit', 'pt-board']) {
     expect(await ui.find({ key })).toBeDefined()
   }
-  for (const key of ['pt-details', 'pt-level', 'pt-col-callers']) expect(await ui.find({ key })).toBeUndefined()
+  for (const key of ['pt-details', 'pt-level-full', 'pt-col-callers', 'pt-copy']) expect(await ui.find({ key })).toBeUndefined()
   expect(await ui.find({ type: 'Text', text: 'PONYTAIL' })).toBeDefined()
-  // The current level is marked in its label; the others are plain.
-  expect(((await ui.find({ key: 'pt-level-full' })) as { props?: { label?: string } } | undefined)?.props?.label).toBe('✓ Full')
-  expect(((await ui.find({ key: 'pt-level-lite' })) as { props?: { label?: string } } | undefined)?.props?.label).toBe('Lite')
+  // The dropdown shows the current level.
+  expect(((await ui.find({ key: 'pt-level' })) as { props?: { value?: string } } | undefined)?.props?.value).toBe('full')
   for (const text of ['$1.50', 'last $0.25 · ⌀ $0.30', '310.0k', '5 turns', '2m 5s', '80%', '12 passed']) {
     expect((await ui.find({ type: 'Text', text }))?.text).toBe(text)
   }
   expect(await ui.find({ key: 'install' })).toBeUndefined() // Ponytail alone counts as a tool on the bar
-  await ui.press({ key: 'pt-level-lite' })
+  await ui.select({ key: 'pt-level', value: 'lite' })
   await ui.press({ key: 'pt-review' })
   expect(ran).toEqual(['ponytail:ponytail lite', 'ponytail:ponytail-review'])
   await ui.unmount()
@@ -168,12 +167,22 @@ test('the settings pick which ponytail columns show', async ($, on) => {
   await ui.unmount()
 })
 
+test('the stats switch hides the whole strip but keeps the buttons', async ($, on) => {
+  world(on, { installed: false, graph: false, settings: { stats: { ponytail: { all: false } } } })
+  withPonytail(on)
+  await $.session.start({ cwd: CWD, surface: 'terminal', isInteractive: true })
+  const ui = await $.ui.mount({ ...BAND, surface: 'terminal' })
+  for (const key of ['pt-col-cost', 'pt-col-tokens']) expect(await ui.find({ key })).toBeUndefined()
+  for (const key of ['pt-review', 'pt-board']) expect(await ui.find({ key })).toBeDefined()
+  await ui.unmount()
+})
+
 test('ponytail switched off the bar shows no section', async ($, on) => {
   world(on, { installed: false, graph: false, settings: { enabled: { ponytail: false } } })
   withPonytail(on)
   await $.session.start({ cwd: CWD, surface: 'desktop', isInteractive: true })
   const ui = await $.ui.mount({ ...BAND, surface: 'desktop' })
-  expect(await ui.find({ key: 'pt-copy' })).toBeUndefined()
+  expect(await ui.find({ key: 'pt-board' })).toBeUndefined()
   expect(await ui.find({ key: 'install' })).toBeDefined()
   await ui.unmount()
 })
